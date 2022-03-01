@@ -1,10 +1,26 @@
-<template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
-</template>
+<script>
+import Sidebar from '@/components/sidebar/Sidebar'
+import { sidebarWidth } from '@/components/sidebar/state'
+
+import './assets/tailwind.css'
+
+
+export default {
+  components: { Sidebar },
+  setup() {
+    return { sidebarWidth }
+  }
+}
+</script>
+  <template>
+      <div>
+        <!-- Agrgamos sidebar a nuestra app -->
+          <Sidebar />
+          <div :style="{ 'margin-left': sidebarWidth }" >
+            <router-view />
+          </div>
+      </div>
+  </template>
 
 <style>
 #app {
