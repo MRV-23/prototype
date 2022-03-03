@@ -14,13 +14,19 @@ export default {
 <template>
   <div class="sidebar" :style="{ width: sidebarWidth }">
     <h1>
-      <span >Diversion Yayon</span>
+      <span v-if="collapsed">
+        <div>D</div>
+        <div>Y</div>
+      </span>
+      <span v-else>Diversion Yayon</span>
     </h1>
-
-    <SidebarLink to="/" icon="fas fa-home">Home</SidebarLink>
-    <SidebarLink to="/renta" icon="fas fa-chart-area">Renta</SidebarLink>
-    <SidebarLink to="/brincolin" icon="fas fa-campground">Brincolines</SidebarLink>
-    <SidebarLink to="/clientes" icon="fas fa-users">Clientes</SidebarLink>
+    <div class="justify-items- m2 ">
+        <SidebarLink to="/" icon="fas fa-home">Home</SidebarLink>
+        <SidebarLink to="/renta" icon="fas fa-chart-area">Renta</SidebarLink>
+        <SidebarLink to="/brincolin" icon="fas fa-campground">Brincolines</SidebarLink>
+        <SidebarLink to="/clientes" icon="fas fa-users">Clientes</SidebarLink>
+    </div>
+    
     
 
     <span
@@ -28,7 +34,7 @@ export default {
       :class="{ 'rotate-180': collapsed }"
       @click="toggleSidebar"
     >
-      <i class="fas fa-angle-double-left text-white" />
+      <i class="fas fa-angle-double-left" />
     </span>
   </div>
 </template>
@@ -43,19 +49,26 @@ export default {
 
 <style scoped>
 .sidebar {
-  @apply text-white bg-yellow-400 float-left fixed top-0 left-0 bottom-0 p-5 flex flex-col;
+    @apply text-white bg-yellow-400 float-left fixed top-0 left-0 bottom-0 p-5 flex flex-col;
+
 }
+
+.sidebar h1 {
+  height: 2.5em;
+}
+
 .collapse-icon {
   position: absolute;
   bottom: 0;
   padding: 0.75em;
+
   color: rgba(255, 255, 255, 0.7);
+
   transition: 0.2s linear;
 }
+
 .rotate-180 {
   transform: rotate(180deg);
   transition: 0.2s linear;
 }
-
-
 </style>
