@@ -1,15 +1,14 @@
 <template>
-<div class="grid justify-items-center p-28">
+<div class="grid justify-items-center p-28 w-full">
 
 
-<form class="w-full max-w-lg bg">
+<form class="w-full max-w-2xl ">
   <div class="flex flex-wrap -mx-3 mb-6" >
     <div class="w-full md:w-1/3 px-3 mb-6 md:mb-0">
       <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-first-name">
         Cliente
       </label>
-      <input v-model="cliente" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane">
-      <p class="text-red-500 text-xs italic">Please fill out this field.</p>
+      <input v-model="cliente" class="appearance-none block w-full bg-gray-200 text-gray-700 border py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" id="grid-first-name" type="text" placeholder="Jane">
     </div>
     <div class="w-full md:w-1/3 px-3">
       <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-last-name">
@@ -40,7 +39,7 @@
       <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-password">
         Direccion
       </label>
-      <input v-model="direccion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="password" placeholder="Privada Norte #8567">
+      <input v-model="direccion" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-password" type="text" placeholder="Privada Norte #8567">
       <p class="text-gray-600 text-xs italic">Make it as long and as crazy as you'd like</p>
     </div>
   </div>
@@ -58,25 +57,58 @@
       <input v-model="nota" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="Casa con fachada color verde ">
     </div>
   </div>
+  <button  @click="enviarForm($event)" class="text-white font-medium rounded-md shadow-xl bg-green-400  px-5 p-2 m-3">SAVE <i class="fa-solid fa-floppy-disk"></i></button>
+    <button type="reset" class="text-white font-medium rounded-md shadow-xl bg-red-400 p-2">CANCEL <i class="fa-solid fa-ban"></i></button>
   {{cliente}}
   {{hora}}
   {{paquete}}
   {{direccion}}
   {{saldo}}
-  {{nota}}
+  {{nota}} <br>
+    <br><br>
+  <div class="w-full max-w-2xl ">
+      <table class="table table-striped w-full">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente </th>
+                                <th>Hora</th>
+                                <th>Paquete</th>
+                                <th>Direccion</th>
+                                <th>Saldo</th>
+                                <th>Notas</th>
+                                <th colspan="2">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(user, index) in datos" :key="user">
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.cliente }}</td>
+                                <td>{{ user.hora }}</td>
+                                <td>{{ user.paquete }}</td>
+                                <td>{{ user.direccion }}</td>
+                                <td>{{ user.saldo }}</td>
+                                <td>{{ user.notas }}</td>
+                                <td><button  class="text-white font-medium rounded-md shadow-xl bg-green-400  px-5 p-2 m-3">Edit</button>
+                                </td>
+                                <td><button  @click="eliminar($event,user.id)" :id="index" class="text-white font-medium rounded-md shadow-xl bg-red-400 p-2">Delete</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+  </div>
+
 
 </form>
 
 </div>
-    <button  @click="toggleSidebar" class="text-white font-medium rounded-md shadow-xl bg-green-400  px-5 p-2 m-3">SAVE <i class="fa-solid fa-floppy-disk"></i></button>
-    <button class="text-white font-medium rounded-md shadow-xl bg-red-400 p-2">CANCEL <i class="fa-solid fa-ban"></i></button>
+    
   <h1 class="text-xl text-red-400">This is rentas {{ collapsed ? 'closed' : 'open' }}</h1>
   <button @click="toggleSidebar">T</button>
 </template>
 
 <script>
 import { collapsed, toggleSidebar } from '@/components/sidebar/state'
-import { ref } from 'vue'
+import { ref , onMounted , computed} from 'vue'
 
 export default {
   setup() {
@@ -86,6 +118,92 @@ export default {
       const direccion = ref('')
       const saldo = ref('')
       const nota = ref('')
+
+      const users = ref([])
+
+      let datosRef = ref([
+            {   
+                id: '1',
+                cliente: 'MRV-23',
+                hora: '10',
+                paquete: 'Paquete 1',
+                direccion: 'Privada 9A',
+                notas: 'Casa Verde',
+                saldo: '800'
+            },
+            {   
+                id: '2',
+                cliente: 'Jose-23',
+                hora: '10',
+                paquete: 'Privada 2',
+                direccion: '800',
+                notas: 'Casa Azul',
+                saldo: '800'
+            }
+      ])
+      
+
+      onMounted(async() => {
+        const res = await fetch('https://jsonplaceholder.typicode.com/users');
+                const data = await res.json();
+                users.value = data.slice(0, 5);
+                users.value = data
+                console.log('data: ',users.value)
+      })
+        const actualizarData = (()=>{
+            localStorage.setItem('DataFefUser', JSON.stringify(datosRef.value));
+            console.info("entro")
+        })
+        const enviarForm = (async(event)=>{
+            
+
+                event.preventDefault()
+
+       
+                
+                   datosRef.value.push({
+                        id: datosRef.value.length+1,
+                        cliente:cliente.value ,
+                        hora: hora.value,
+                        paquete: paquete.value,
+                        direccion:  direccion.value,                        
+                        saldo: saldo.value,
+                        notas: nota.value,
+                    });
+               actualizarData()
+         alert("FORMULARIO ENVIADO")
+         console.info(
+                cliente.value,
+                hora.value,
+                paquete.value,
+                direccion.value,
+                saldo.value,
+                nota.value
+            )
+
+         /*localStorage.setItem("response", response.value.type_user)
+                localStorage.setItem("responses", JSON.stringify(response.value))*/
+      })
+      
+
+      const eliminar = ((event,id)=>{
+        //   const confirmation = confirm('Do you want to delete the user?');
+                    console.log(id)
+                    event.preventDefault();
+                    datosRef  = datosRef.value.filter(user => user.id !== id);
+                    console.log()
+                    
+                   
+          
+      })
+
+      const datos = computed(() => {
+          console.log()
+        return localStorage.getItem('DataFefUser')== null ? datosRef.value : localStorage.getItem('DataFefUser')
+        }) 
+        //Li
+
+
     return { 
         cliente,
         hora,
@@ -93,9 +211,13 @@ export default {
         direccion,
         saldo,
         nota,
+        datosRef,
 
         collapsed, 
-        toggleSidebar 
+        toggleSidebar ,
+        enviarForm,
+        eliminar,
+        datos
     }
   }
 }
